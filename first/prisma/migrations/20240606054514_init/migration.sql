@@ -11,7 +11,6 @@ CREATE TABLE "User" (
 CREATE TABLE "Event" (
     "id" SERIAL NOT NULL,
     "eventName" TEXT NOT NULL,
-    "data" JSONB NOT NULL,
     "userId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -20,6 +19,3 @@ CREATE TABLE "Event" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- AddForeignKey
-ALTER TABLE "Event" ADD CONSTRAINT "Event_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

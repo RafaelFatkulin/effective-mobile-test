@@ -19,12 +19,14 @@ app.use(express_1.default.json());
 const prisma = new client_1.PrismaClient();
 app.get('/users', (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const users = yield prisma.user.findMany();
+        const users = yield prisma.user.findMany({
+            orderBy: { id: 'desc' }
+        });
         response.json(users);
     }
     catch (error) {
         response.status(500).json({
-            message: 'Произошла ошибка при создании пользователя'
+            message: 'Произошла ошибка при получении списка пользователей'
         });
     }
 }));
@@ -32,7 +34,7 @@ app.post('/users', (request, response) => __awaiter(void 0, void 0, void 0, func
     try {
         const user = yield prisma.user.create({ data: request.body });
         yield sendEvent('user-created', user);
-        return response.status(201).json(user);
+        response.status(201).json(user);
     }
     catch (error) {
         console.log(error);
@@ -46,7 +48,7 @@ app.put('/users/:id', (request, response) => __awaiter(void 0, void 0, void 0, f
         const id = parseInt(request.params.id);
         const user = yield prisma.user.update({
             where: { id },
-            data: request.body
+            data: request.body,
         });
         yield sendEvent('user-updated', user);
         response.json(user);
@@ -60,17 +62,15 @@ app.put('/users/:id', (request, response) => __awaiter(void 0, void 0, void 0, f
 }));
 function sendEvent(eventName, user) {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch(`http://localhost:3001/events`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                eventName,
-                data: user
-            })
-        });
-        console.log(response);
-        if (!response.ok) {
-            console.error(`Произошла ошибка при отправке события в сервис историт действий: ${response.statusText}`);
+        try {
+            yield fetch(`http://localhost:3001/events`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eventName, userId: user.id }),
+            });
+        }
+        catch (error) {
+            console.error(`Произошла ошибка при отправке события в сервис историй действий: ${error}`);
         }
     });
 }

@@ -14,17 +14,14 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
+  id    Int    @id @default(autoincrement())
   name  String
-  email String  @unique
-  Event Event[]
+  email String @unique
 }
 
 model Event {
   id        Int      @id @default(autoincrement())
   eventName String
-  data      Json
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }

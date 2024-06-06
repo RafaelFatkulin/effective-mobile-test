@@ -9,25 +9,15 @@ const prisma = new PrismaClient();
 app.post('/events', async (req, res) => {
     try {
         console.log('events POST body', req.body)
-        const {eventName, data} = req.body
+        const {eventName, userId} = req.body
+        console.log(req.body)
         const event = await prisma.event.create({
             data: {
                 eventName,
-                user: data
+                userId
             }
         })
-        // const event = await prisma.event.create({
-        //     data: {
-        //         id: req.body.id,
-        //         eventName: req.body.eventName,
-        //         data: req.body.data,
-        //         user: {
-        //             connect: {
-        //                 id: parseInt(req.body.data.userId)
-        //             }
-        //         }
-        //     }
-        // })
+
         res.json(event)
     } catch (e) {
         console.error(e);
@@ -37,12 +27,15 @@ app.post('/events', async (req, res) => {
 
 app.get('/events', async (req, res) => {
     try {
-        const {userId, page, limit} = req.query
-        const where = userId ? {userId: parseInt(userId)} : {}
+        const { userId, page, limit } = req.query;
+        const where = userId ? { userId: parseInt(userId) } : {};
+        const skip = page && limit ? (page - 1) * limit : undefined;
+        const take = page && limit ? parseInt(limit) : undefined;
+
         const events = await prisma.event.findMany({
             where,
-            skip: (page - 1) * limit,
-            take: limit,
+            skip,
+            take,
             orderBy: {createdAt: 'desc'}
         })
 
