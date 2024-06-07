@@ -1,5 +1,0 @@
-{
-  "watch": ["src/**/*.ts", "src/**/*.js"],
-  "ext": "ts,js",
-  "exec": "node ./src/events-service.js && ts-node ./src/users-service.ts"
-}
