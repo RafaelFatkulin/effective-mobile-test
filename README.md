@@ -1,1 +1,28 @@
-# effective-mobile-test
+# effective mobile test
+
+## Первое задание
+
+---
+
+<p>Создайте файл .env и скопируйте содержимое .env.exaple в файл .env</p>
+
+```
+    cd first
+    npm i
+    npx prisma migrate dev
+    npm run start:users
+    npm run start:events
+```
+
+## Второе задание
+
+---
+
+<p>Создайте файл .env и скопируйте содержимое .env.exaple в файл .env</p>
+
+```
+    cd second
+    npm i
+    npx prisma migrate dev
+    npm run start:dev
+```
