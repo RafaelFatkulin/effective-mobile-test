@@ -27,22 +27,34 @@ app.post('/events', async (req, res) => {
 
 app.get('/events', async (req, res) => {
     try {
+        console.log(req.query)
         const { userId, page, limit } = req.query;
-        const where = userId ? { userId: parseInt(userId) } : {};
-        const skip = page && limit ? (page - 1) * limit : undefined;
-        const take = page && limit ? parseInt(limit) : undefined;
+
+        let where = {};
+        let skip;
+        let take;
+
+        if (userId) {
+            where.userId = parseInt(userId);
+        }
+
+        if (page && limit) {
+            skip = (page - 1) * parseInt(limit);
+            take = parseInt(limit) || 10;
+            console.log(take)
+        }
 
         const events = await prisma.event.findMany({
             where,
             skip,
             take,
-            orderBy: {createdAt: 'desc'}
-        })
+            orderBy: { createdAt: 'desc' }
+        });
 
         res.json(events)
     } catch (e) {
         console.error(e)
-        res.status(500).json({message: 'Ошибка при получении событий'});
+        res.status(500).json({ message: 'Ошибка при получении событий' });
     }
 })
 
